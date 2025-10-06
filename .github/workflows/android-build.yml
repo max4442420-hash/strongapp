@@ -1,0 +1,29 @@
+name: Build StrongApp APK
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kód letöltése
+        uses: actions/checkout@v3
+
+      - name: Függőségek telepítése
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-setuptools git zip unzip openjdk-17-jdk
+          pip install buildozer cython virtualenv
+
+      - name: Android SDK és NDK letöltése
+        run: |
+          sudo apt install -y zip unzip
+          buildozer android debug
+
+      - name: APK mentése
+        uses: actions/upload-artifact@v3
+        with:
+          name: strongapp-apk
+          path: bin/*.apk
